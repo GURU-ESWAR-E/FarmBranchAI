@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="buyer_dashboard_title">Buyer Mandi Portal - FarmBranch</title>
+
+  <!-- Leaflet CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+
+  <!-- Tri-color National Stripe -->
+  <div class="gov-tricolor-stripe"></div>
+
+  <!-- Government Branding Top Bar -->
+  <header class="gov-top-bar">
+    <div class="gov-top-container">
+      <div class="gov-emblem-badge">
+        <span class="emblem-icon">🏛️</span>
+        <div>
+          <strong data-i18n="gov_header_title">Government of India</strong>
+          <span style="margin: 0 6px; color: #cbd5e1;">|</span>
+          <span data-i18n="gov_header_sub">Ministry of Agriculture & Farmers Welfare | Digital AgriStack Integrated</span>
+        </div>
+      </div>
+      <div class="gov-links">
+        <span class="official-tag" data-i18n="badge_official">Official Government Portal</span>
+        <span class="badge badge-approved">Mandi License Verified</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Header -->
+  <nav class="main-header">
+    <div class="nav-container">
+      <a href="/" class="brand-section">
+        <div class="brand-logo-icon">🏢</div>
+        <div class="brand-text">
+          <h1>Farm<span>Branch</span></h1>
+          <p data-i18n="portal_tagline">National Unified Agri-Logistics & Mandi Trading Grid</p>
+        </div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="nav-links">
+          <a href="/" class="nav-item" data-i18n="nav_home">Home</a>
+          <a href="/routing" class="nav-item">🗺️ Dynamic Marketplace Routing</a>
+          <a href="/fpo" class="nav-item" data-i18n="nav_fpo">FPO Hub</a>
+          <a href="/buyer" class="nav-item active" data-i18n="nav_buyer">Buyer Mandi</a>
+          <a href="/driver" class="nav-item" data-i18n="nav_driver">Logistics Hub</a>
+        </div>
+
+        <!-- Language Switcher Dropdown -->
+        <div class="lang-selector-wrap">
+          <button id="langDropdownBtn" class="lang-select-btn">
+            🌐 <span id="currentLangLabel">English</span> ▾
+          </button>
+          <div id="langDropdownMenu" class="lang-dropdown-menu">
+            <div class="lang-option selected" data-lang="en">English (EN)</div>
+            <div class="lang-option" data-lang="hi">हिन्दी (Hindi)</div>
+            <div class="lang-option" data-lang="ta">தமிழ் (Tamil)</div>
+            <div class="lang-option" data-lang="mr">मराठी (Marathi)</div>
+            <div class="lang-option" data-lang="te">తెలుగు (Telugu)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-wrapper">
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumb-bar">
+      <a href="/" data-i18n="nav_home">Home</a>
+      <span class="separator">/</span>
+      <span data-i18n="nav_buyer">Buyer Mandi</span>
+    </div>
+
+    <!-- 1. AUTH SECTION: License & 2-Step OTP Authentication -->
+    <div id="buyerAuthSection" style="max-width: 500px; margin: 40px auto;">
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🏢</span>
+            <span data-i18n="buyer_login_title">Mandi Trader & Buyer Login</span>
+          </div>
+        </div>
+
+        <form id="formBuyerLogin">
+          <div class="form-group">
+            <label class="form-label" data-i18n="buyer_license">Buyer License ID</label>
+            <input type="text" id="inputBuyerLicense" class="form-control" placeholder="e.g. MANDI-TN-2026-9041" value="MANDI-TN-2026-9041" required>
+            <small style="color:var(--text-muted); font-size:0.75rem;">Default Demo Mandi License pre-filled</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="buyer_name">Buyer / Mandi Firm Name</label>
+            <input type="text" id="inputBuyerName" class="form-control" placeholder="e.g. Coimbatore APMC Central Mandi" value="Coimbatore APMC Central Mandi" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="buyer_phone">Authorized Mobile Number</label>
+            <input type="text" id="inputBuyerPhone" class="form-control" placeholder="+91 98400 XXXXX" value="+91 98400 12345" required>
+          </div>
+
+          <button type="submit" class="btn btn-navy btn-block" data-i18n="btn_send_otp">
+            🔒 Send 2-Step Verification OTP
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. MANDI TERMINAL SECTION (Logged-in view) -->
+    <div id="buyerTerminalSection" style="display: none;">
+      
+      <!-- Order Confirmation Notification Anchor -->
+      <div id="orderConfirmationBanner" style="display:none;"></div>
+
+      <!-- Mandi Profile Header Card -->
+      <div class="card-panel" style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #fff; border:none; margin-bottom: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap: 14px;">
+          <div>
+            <div style="display:flex; align-items:center; gap: 10px;">
+              <h2 id="displayBuyerName" style="font-size: 1.45rem; font-weight:800;">Coimbatore APMC Central Mandi</h2>
+              <span id="displayBuyerLicense" class="badge badge-approved" style="background:rgba(255,255,255,0.2); color:#fff; border-color:rgba(255,255,255,0.3);">MANDI-TN-2026-9041</span>
+            </div>
+            <p style="color:#cbd5e1; font-size:0.88rem; margin-top:4px;">
+              📍 <span id="displayBuyerLoc">R.S. Puram, Coimbatore</span> | 
+              <span data-i18n="buyer_max_bid_label">Your Maximum Buying Bid</span>: <strong id="displayBuyerBid" style="color:#93c5fd;">₹3,100/qtl</strong>
+            </p>
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <a href="/routing" class="btn btn-secondary" style="background:rgba(255,255,255,0.15); color:#fff; border-color:rgba(255,255,255,0.3);">
+              🗺️ Full Routing Workspace
+            </a>
+            <button id="btnBuyerLogout" class="btn btn-secondary" style="background:rgba(255,255,255,0.15); color:#fff; border-color:rgba(255,255,255,0.2);" data-i18n="btn_logout">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Geospatial Crop Discovery Map -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <span>🗺️</span>
+              <span>Buyer Mandi Discovery & Route Grid</span>
+            </div>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+              Warehouse centered with 30km/60km proximity rings & instant farmer bid comparison
+            </p>
+          </div>
+          <div id="buyerRouteStatus" style="font-size:0.85rem; font-weight:700; color:#1d4ed8;"></div>
+        </div>
+
+        <div id="buyerDiscoveryMap" class="map-container"></div>
+      </div>
+
+      <!-- Nearby Registered Farmers List -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🌾</span>
+            <span data-i18n="nearby_farmers_title">Nearby Registered Farmers with Live Price Comparison</span>
+          </div>
+        </div>
+
+        <div id="nearbyFarmersList">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- 2-Step OTP Modal -->
+  <div id="modalBuyerOtp" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🔐</span>
+          <span data-i18n="otp_modal_title">2-Step OTP Security Verification</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom: 16px;" data-i18n="otp_sent_msg">
+          An official 6-digit OTP has been dispatched to your mobile number.
+        </p>
+
+        <form id="formVerifyOtp">
+          <input type="hidden" id="otpBuyerLicenseRef">
+          <div class="form-group">
+            <label class="form-label" data-i18n="otp_input">Enter 6-Digit OTP</label>
+            <input type="text" id="inputOtpCode" class="form-control" placeholder="123456" value="123456" maxlength="6" style="letter-spacing: 4px; font-size:1.2rem; text-align:center;" required>
+            <small style="color:#047857; font-weight:600; display:block; margin-top:4px;">Demo OTP [ 123456 ] auto-filled</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="btn_verify_otp">
+            Verify & Access Mandi Hub
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trade Proposal & Transport Routing Modal -->
+  <div id="modalTradeProposal" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🤝</span>
+          <span>Send Direct Trade Proposal & Vehicle Routing</span>
+        </div>
+        <button id="btnCloseTradeModal" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#f8fafc; border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:18px; font-size:0.88rem;">
+          <p><strong>Farmer:</strong> <span id="tradeFarmerName"></span></p>
+          <p><strong>Location:</strong> <span id="tradeFarmerLoc"></span></p>
+          <p><strong>Lot Available:</strong> <span id="tradeFarmerCrop"></span></p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Offered Purchase Price (₹ / Quintal)</label>
+            <input type="number" id="tradeOfferPrice" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Offered Quantity (Quintals)</label>
+            <input type="number" id="tradeOfferQty" class="form-control" required oninput="updateBuyerProposalEstimate()">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Select Logistics Vehicle Tier</label>
+          <select id="tradeVehicleType" class="form-control" onchange="updateBuyerProposalEstimate()">
+            <option value="Minivan / Tata Ace" selected>Minivan / Tata Ace (Base ₹400 + ₹18/km)</option>
+            <option value="Mini Car / Pickup">Mini Car / Pickup (Base ₹250 + ₹12/km)</option>
+            <option value="Commercial Truck (10-Wheeler / Eicher)">Commercial Truck (Base ₹1000 + ₹35/km)</option>
+          </select>
+        </div>
+
+        <!-- Estimated Freight Cost Matrix -->
+        <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:12px; font-size:0.85rem; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between;">
+            <span>Estimated Freight (Base + Distance + ₹5/Qtl):</span>
+            <strong id="dispProposalFreight" style="color:#047857;">₹650</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:4px;">
+            <span>Estimated Total Deal Cost (Crop + Freight):</span>
+            <strong id="dispProposalGrandTotal" style="color:#0f172a;">₹0</strong>
+          </div>
+        </div>
+
+        <button type="button" id="btnConfirmSendProposal" class="btn btn-primary btn-block">
+          Transmit Trade Proposal & Reserve Transport via AgriStack
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Farmer AgriStack SMS Confirmation Simulation Modal -->
+  <div id="modalFarmerSms" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 500px;">
+      <div class="modal-header" style="background:#fff7ed;">
+        <div class="modal-title" style="color:#9a3412;">
+          <span>📱</span>
+          <span data-i18n="sms_modal_title">Farmer AgriStack SMS Confirmation Simulation</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div style="background:#ffffff; border: 2px dashed #fb923c; border-radius: 8px; padding: 16px; margin-bottom: 20px; font-family: monospace; font-size: 0.88rem; color:#1e293b; line-height: 1.5;">
+          <p style="color:#ea580c; font-weight:bold; margin-bottom:6px;">[ GOVT-AGRISTACK SMS NOTIFICATION ]</p>
+          <p>Dear <strong id="smsFarmerName">Farmer</strong> (<span id="smsFarmerPhone"></span>),</p>
+          <p style="margin-top:6px;">Trade Proposal received from <strong id="smsBuyerName">Mandi Buyer</strong>:</p>
+          <p style="background:#f1f5f9; padding:8px; border-radius:4px; margin: 8px 0;" id="smsTradeDetails"></p>
+          <p>Reply YES to lock trade & trigger automated transport dispatch or NO to decline.</p>
+        </div>
+
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:16px;">
+          * Interactive simulation: Choose whether the farmer accepts or declines the trade proposal.
+        </p>
+
+        <div style="display:flex; gap:12px;">
+          <button type="button" id="btnSimulateFarmerAccept" class="btn btn-primary" style="flex:1;" data-i18n="btn_simulate_accept">
+            ✓ Accept Trade
+          </button>
+          <button type="button" id="btnSimulateFarmerReject" class="btn btn-danger" style="flex:1;" data-i18n="btn_simulate_reject">
+            ✕ Decline Trade
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <p data-i18n="footer_text">© 2026 FarmBranch. Ministry of Agriculture & Farmers Welfare, Government of India.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/buyer.js"></script>
+</body>
+</html>

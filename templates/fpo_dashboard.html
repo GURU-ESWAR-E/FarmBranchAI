@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="fpo_dashboard_title">FPO Hub - FarmBranch Portal</title>
+
+  <!-- Leaflet CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+
+  <!-- Tri-color National Stripe -->
+  <div class="gov-tricolor-stripe"></div>
+
+  <!-- Government Branding Top Bar -->
+  <header class="gov-top-bar">
+    <div class="gov-top-container">
+      <div class="gov-emblem-badge">
+        <span class="emblem-icon">🏛️</span>
+        <div>
+          <strong data-i18n="gov_header_title">Government of India</strong>
+          <span style="margin: 0 6px; color: #cbd5e1;">|</span>
+          <span data-i18n="gov_header_sub">Ministry of Agriculture & Farmers Welfare | Digital AgriStack Integrated</span>
+        </div>
+      </div>
+      <div class="gov-links">
+        <span class="official-tag" data-i18n="badge_official">Official Government Portal</span>
+        <span class="badge badge-agristack" data-i18n="badge_agristack">AgriStack Verified</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Header -->
+  <nav class="main-header">
+    <div class="nav-container">
+      <a href="/" class="brand-section">
+        <div class="brand-logo-icon">🌾</div>
+        <div class="brand-text">
+          <h1>Farm<span>Branch</span></h1>
+          <p data-i18n="portal_tagline">National Unified Agri-Logistics & Mandi Trading Grid</p>
+        </div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="nav-links">
+          <a href="/" class="nav-item" data-i18n="nav_home">Home</a>
+          <a href="/routing" class="nav-item">🗺️ Dynamic Marketplace Routing</a>
+          <a href="/fpo" class="nav-item active" data-i18n="nav_fpo">FPO Hub</a>
+          <a href="/buyer" class="nav-item" data-i18n="nav_buyer">Buyer Mandi</a>
+          <a href="/driver" class="nav-item" data-i18n="nav_driver">Logistics Hub</a>
+        </div>
+
+        <!-- Language Switcher Dropdown -->
+        <div class="lang-selector-wrap">
+          <button id="langDropdownBtn" class="lang-select-btn">
+            🌐 <span id="currentLangLabel">English</span> ▾
+          </button>
+          <div id="langDropdownMenu" class="lang-dropdown-menu">
+            <div class="lang-option selected" data-lang="en">English (EN)</div>
+            <div class="lang-option" data-lang="hi">हिन्दी (Hindi)</div>
+            <div class="lang-option" data-lang="ta">தமிழ் (Tamil)</div>
+            <div class="lang-option" data-lang="mr">मराठी (Marathi)</div>
+            <div class="lang-option" data-lang="te">తెలుగు (Telugu)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-wrapper">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+      <a href="/" data-i18n="nav_home">Home</a>
+      <span class="separator">/</span>
+      <span data-i18n="nav_fpo">FPO Hub</span>
+    </div>
+
+    <!-- 1. AUTH SECTION (Login & Registration) -->
+    <div id="fpoAuthSection" style="max-width: 540px; margin: 40px auto;">
+      <div class="card-panel">
+        <div style="display:flex; border-bottom: 2px solid var(--border-color); margin-bottom: 20px;">
+          <button id="tabFpoLogin" class="btn btn-secondary active" style="flex:1; border-radius:0; border:none; border-bottom: 3px solid var(--primary); font-weight:700;" data-i18n="fpo_login_title">
+            FPO Login
+          </button>
+          <button id="tabFpoRegister" class="btn btn-secondary" style="flex:1; border-radius:0; border:none; font-weight:700;" data-i18n="fpo_register_title">
+            Register FPO
+          </button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="formFpoLogin">
+          <div class="form-group">
+            <label class="form-label" data-i18n="fpo_id">FPO ID</label>
+            <input type="text" id="loginFpoId" class="form-control" placeholder="e.g. FPO-TN-CBE-01" value="FPO-TN-CBE-01" required>
+            <small style="color:var(--text-muted); font-size:0.75rem;">Demo credentials pre-filled for convenience</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="fpo_password">Secure Password</label>
+            <input type="password" id="loginFpoPassword" class="form-control" value="fpo123" required>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" id="rememberFpo" checked>
+            <label for="rememberFpo" data-i18n="remember_fpo">Remember FPO on this device</label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="btn_login">Login to Portal</button>
+        </form>
+
+        <!-- Registration Form -->
+        <form id="formFpoRegister" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" data-i18n="fpo_name">FPO Organization Name</label>
+            <input type="text" id="regFpoName" class="form-control" placeholder="e.g. Kongu Farmers Producer Co." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="fpo_location">FPO District / Location</label>
+            <input type="text" id="regFpoLocation" class="form-control" placeholder="e.g. Coimbatore, Tamil Nadu" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="fpo_id">FPO ID</label>
+            <input type="text" id="regFpoId" class="form-control" placeholder="e.g. FPO-TN-009" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="fpo_password">Secure Password</label>
+            <input type="password" id="regFpoPassword" class="form-control" placeholder="Create strong password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="btn_register">Register FPO</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. FPO CENTRAL HUB (Logged-in view) -->
+    <div id="fpoHubSection" style="display: none;">
+      
+      <!-- FPO Info Bar -->
+      <div class="card-panel" style="background: linear-gradient(135deg, #064e3b, #0f172a); color: #fff; border:none; margin-bottom: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap: 14px;">
+          <div>
+            <div style="display:flex; align-items:center; gap: 10px;">
+              <h2 id="displayFpoName" style="font-size: 1.5rem; font-weight:800;">Kongu Farmers Producer Co.</h2>
+              <span id="displayFpoId" class="badge badge-agristack" style="background: rgba(255,255,255,0.2); color:#fff; border-color: rgba(255,255,255,0.3);">FPO-TN-CBE-01</span>
+            </div>
+            <p style="color: #cbd5e1; font-size: 0.88rem; margin-top: 4px;">
+              📍 <span id="displayFpoLocation">Coimbatore Rural, Tamil Nadu</span> | Government Registered FPO Unit
+            </p>
+          </div>
+
+          <div style="display:flex; gap: 10px;">
+            <a href="/routing" class="btn btn-secondary" style="background: rgba(255,255,255,0.15); color:#fff; border-color: rgba(255,255,255,0.3);">
+              🗺️ Full Routing Engine
+            </a>
+            <button id="btnOpenAddFarmerModal" class="btn btn-primary" style="background:#10b981; border-color:#10b981;" data-i18n="btn_add_farmer">
+              + Register AgriStack Farmer
+            </button>
+            <button id="btnFpoLogout" class="btn btn-secondary" style="background: rgba(255,255,255,0.15); color:#fff; border-color: rgba(255,255,255,0.2);" data-i18n="btn_logout">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Farmers Table Panel -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🌾</span>
+            <span data-i18n="farmer_list_title">Onboarded AgriStack Farmers</span>
+          </div>
+          <span class="badge badge-agristack" data-i18n="badge_agristack">AgriStack Verified Database</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_farmer_id">AgriStack ID</th>
+                <th data-i18n="th_farmer_name">Farmer Name</th>
+                <th data-i18n="th_location">Location</th>
+                <th data-i18n="th_crop">Crop Type</th>
+                <th data-i18n="th_qty">Quantity (Qtl)</th>
+                <th data-i18n="th_exp_price">Expected Price</th>
+                <th data-i18n="th_max_price">Max Sellable</th>
+                <th data-i18n="th_status">Verification Status</th>
+                <th data-i18n="th_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="farmerTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Geospatial Trade Map & Matcher -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <span>🗺️</span>
+              <span data-i18n="map_title">Geospatial Matching & Supply Chain Grid</span>
+            </div>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;" data-i18n="map_subtitle">
+              Green Pins: Verified Farmers | Blue Pins: Mandi Buyers & APMC Hubs
+            </p>
+          </div>
+          <div id="fpoRouteStatus" style="font-size:0.85rem; font-weight:700; color:#047857;"></div>
+        </div>
+
+        <div id="fpoMap" class="map-container"></div>
+      </div>
+
+      <!-- Vehicle Routing & Tax Bill Generator -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🧾</span>
+            <span data-i18n="route_builder_title">Automated Freight Route & Tax Invoice Generator</span>
+          </div>
+          <span class="badge badge-approved">Multi-Tier Pricing (Base + ₹/km + ₹5/Qtl)</span>
+        </div>
+
+        <div class="form-row" style="margin-bottom: 20px;">
+          <div class="form-group">
+            <label class="form-label" data-i18n="select_farmer">Select Source Farmer</label>
+            <select id="routeFarmerSelect" class="form-control">
+              <option value="">-- Choose Source Farmer --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="select_buyer">Select Destination Buyer / Mandi</label>
+            <select id="routeBuyerSelect" class="form-control">
+              <option value="">-- Choose Destination Buyer / Mandi --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="select_vehicle">Select Transport Vehicle</label>
+            <select id="routeVehicleSelect" class="form-control">
+              <option value="Minivan / Tata Ace">Minivan / Tata Ace (Base ₹400 + ₹18/km)</option>
+              <option value="Mini Car / Pickup">Mini Car / Pickup (Base ₹250 + ₹12/km)</option>
+              <option value="Commercial Truck (10-Wheeler / Eicher)">Commercial Truck (Base ₹1000 + ₹35/km)</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="btnCalculateBill" class="btn btn-primary" data-i18n="btn_calculate_bill">
+          ⚡ Calculate OSRM Route & Generate Tax Bill
+        </button>
+
+        <!-- Printable Invoice Injection Target -->
+        <div id="generatedInvoiceContainer" style="display:none; margin-top:24px;"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- AgriStack Farmer Onboarding Modal -->
+  <div id="modalAddFarmer" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🏛️</span>
+          <span data-i18n="modal_farmer_title">AgriStack Farmer Verification & Onboarding</span>
+        </div>
+        <button id="btnCloseFarmerModal" class="modal-close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="farmerFormStep1">
+          <form id="formAddFarmer">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" data-i18n="farmer_name">Farmer Full Name</label>
+                <input type="text" id="inputFarmerName" class="form-control" placeholder="e.g. S. Ramanathan" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="farmer_phone">Mobile Number (+91)</label>
+                <input type="text" id="inputFarmerPhone" class="form-control" placeholder="+91 98421 XXXXX" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" data-i18n="farmer_id_input">AgriStack ID</label>
+                <input type="text" id="inputFarmerId" class="form-control" placeholder="AGRI-TN-XXXXX" value="AGRI-TN-88240" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="th_location">Farmer Location</label>
+                <input type="text" id="inputFarmerLoc" class="form-control" placeholder="e.g. Sulur, Coimbatore" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" data-i18n="crop_type">Crop Type</label>
+                <input type="text" id="inputCropType" class="form-control" placeholder="e.g. Ponni Paddy / Coconut" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="crop_quantity">Quantity (Quintals)</label>
+                <input type="number" id="inputCropQty" class="form-control" placeholder="e.g. 150" min="1" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" data-i18n="expected_price_qtl">Expected Price (₹ / Quintal)</label>
+                <input type="number" id="inputExpPrice" class="form-control" placeholder="e.g. 2400" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="max_sellable_price_qtl">Max Sellable Price (₹ / Quintal)</label>
+                <input type="number" id="inputMaxPrice" class="form-control" placeholder="e.g. 2800" required>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px;">
+              <button type="button" id="btnVerifyAgriStack" class="btn btn-navy btn-block" data-i18n="btn_verify_agristack">
+                🔍 Verify with Govt AgriStack DB
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="farmerConfirmStep2" style="display:none; text-align:left;">
+          <div style="background:#ecfdf5; border: 1px solid #6ee7b7; border-radius: 8px; padding: 16px; margin-bottom: 18px;">
+            <div style="display:flex; align-items:center; gap: 10px; color:#065f46;">
+              <span style="font-size: 1.5rem;">✅</span>
+              <div>
+                <strong>AgriStack Identity Verified</strong>
+                <p style="font-size:0.82rem;" data-i18n="verified_confirm_msg">Farmer credentials successfully verified with Central AgriStack Database.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; font-size: 0.88rem; line-height: 1.8;">
+            <p><strong>Name:</strong> <span id="confirmFarmerName"></span></p>
+            <p><strong>AgriStack ID:</strong> <span id="confirmFarmerId" class="badge badge-agristack"></span></p>
+            <p><strong>Location:</strong> <span id="confirmFarmerLoc"></span></p>
+            <p><strong>Crop & Lot:</strong> <span id="confirmCropInfo"></span></p>
+            <p><strong>Price Band:</strong> <span id="confirmPrices"></span></p>
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="button" id="btnCommitFarmer" class="btn btn-primary btn-block" data-i18n="btn_confirm_add">
+              Commit & Save Farmer to DB
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer no-print">
+    <div class="footer-container">
+      <p data-i18n="footer_text">© 2026 FarmBranch. Ministry of Agriculture & Farmers Welfare, Government of India.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/fpo.js"></script>
+</body>
+</html>

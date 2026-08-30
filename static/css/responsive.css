@@ -1,0 +1,86 @@
+/* FarmBranch Responsive Stylesheet */
+
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 1.9rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .role-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .map-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gov-top-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .nav-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .nav-links {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  
+  .hero-banner {
+    padding: 28px 20px;
+  }
+  
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  
+  .hero-desc {
+    font-size: 0.92rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .role-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .invoice-meta-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-dialog {
+    margin: 10px;
+    max-height: 94vh;
+  }
+  
+  .table-responsive {
+    border: 1px solid var(--border-color);
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-text h1 {
+    font-size: 1.15rem;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

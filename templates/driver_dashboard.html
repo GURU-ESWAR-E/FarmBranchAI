@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="driver_dashboard_title">Transporter Hub - FarmBranch Portal</title>
+
+  <!-- Leaflet CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+
+  <!-- Tri-color National Stripe -->
+  <div class="gov-tricolor-stripe"></div>
+
+  <!-- Government Branding Top Bar -->
+  <header class="gov-top-bar">
+    <div class="gov-top-container">
+      <div class="gov-emblem-badge">
+        <span class="emblem-icon">🏛️</span>
+        <div>
+          <strong data-i18n="gov_header_title">Government of India</strong>
+          <span style="margin: 0 6px; color: #cbd5e1;">|</span>
+          <span data-i18n="gov_header_sub">Ministry of Agriculture & Farmers Welfare | Digital AgriStack Integrated</span>
+        </div>
+      </div>
+      <div class="gov-links">
+        <span class="official-tag" data-i18n="badge_official">Official Government Portal</span>
+        <span class="badge badge-agristack">Transport Grid Verified</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Header -->
+  <nav class="main-header">
+    <div class="nav-container">
+      <a href="/" class="brand-section">
+        <div class="brand-logo-icon" style="background: linear-gradient(135deg, #ea580c, #c2410c);">🚚</div>
+        <div class="brand-text">
+          <h1>Farm<span>Branch</span></h1>
+          <p data-i18n="portal_tagline">National Unified Agri-Logistics & Mandi Trading Grid</p>
+        </div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="nav-links">
+          <a href="/" class="nav-item" data-i18n="nav_home">Home</a>
+          <a href="/routing" class="nav-item">🗺️ Dynamic Marketplace Routing</a>
+          <a href="/fpo" class="nav-item" data-i18n="nav_fpo">FPO Hub</a>
+          <a href="/buyer" class="nav-item" data-i18n="nav_buyer">Buyer Mandi</a>
+          <a href="/driver" class="nav-item active" data-i18n="nav_driver">Logistics Hub</a>
+        </div>
+
+        <!-- Language Switcher Dropdown -->
+        <div class="lang-selector-wrap">
+          <button id="langDropdownBtn" class="lang-select-btn">
+            🌐 <span id="currentLangLabel">English</span> ▾
+          </button>
+          <div id="langDropdownMenu" class="lang-dropdown-menu">
+            <div class="lang-option selected" data-lang="en">English (EN)</div>
+            <div class="lang-option" data-lang="hi">हिन्दी (Hindi)</div>
+            <div class="lang-option" data-lang="ta">தமிழ் (Tamil)</div>
+            <div class="lang-option" data-lang="mr">मराठी (Marathi)</div>
+            <div class="lang-option" data-lang="te">తెలుగు (Telugu)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-wrapper">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+      <a href="/" data-i18n="nav_home">Home</a>
+      <span class="separator">/</span>
+      <span data-i18n="nav_driver">Logistics Hub</span>
+    </div>
+
+    <!-- 1. DRIVER REGISTRATION SECTION -->
+    <div id="driverRegisterSection" style="max-width: 580px; margin: 40px auto;">
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🚚</span>
+            <span data-i18n="driver_login_title">Commercial Driver & Transporter Registration</span>
+          </div>
+        </div>
+
+        <form id="formDriverRegister">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="driver_name">Driver Full Name</label>
+              <input type="text" id="regDriverName" class="form-control" placeholder="e.g. M. Velu" value="M. Velu" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="driver_phone">Driver Mobile Number</label>
+              <input type="text" id="regDriverPhone" class="form-control" placeholder="+91 99401 XXXXX" value="+91 99401 10011" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="driver_dl">Driving License Number (DL)</label>
+              <input type="text" id="regDriverDl" class="form-control" placeholder="DL-TN-38-2018-0091" value="DL-TN-38-2018-0091" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="driver_rc">Commercial Vehicle Number (RC)</label>
+              <input type="text" id="regDriverRc" class="form-control" placeholder="TN-38-AB-1234" value="TN-38-AB-1234" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="driver_vehicle_type">Vehicle Classification</label>
+              <select id="regVehicleType" class="form-control">
+                <option value="Minivan / Tata Ace" selected>Minivan / Tata Ace (Base ₹400 + ₹18/km)</option>
+                <option value="Mini Car / Pickup">Mini Car / Pickup (Base ₹250 + ₹12/km)</option>
+                <option value="Commercial Truck (10-Wheeler / Eicher)">Commercial Truck (Base ₹1000 + ₹35/km)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="driver_capacity">Payload Capacity (Quintals)</label>
+              <input type="number" id="regCapacity" class="form-control" value="25" min="1" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="driver_rate">Base Rate per Km (₹)</label>
+              <input type="number" id="regRateKm" class="form-control" value="18" min="1" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-block" style="background:#ea580c; color:#fff;" data-i18n="btn_register_driver">
+            Register Commercial Transporter ➔
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. DRIVER DASHBOARD SECTION (Logged-in view) -->
+    <div id="driverDashboardSection" style="display: none;">
+      
+      <!-- Driver Profile Card -->
+      <div class="card-panel" style="background: linear-gradient(135deg, #c2410c, #0f172a); color: #fff; border:none; margin-bottom: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap: 14px;">
+          <div>
+            <div style="display:flex; align-items:center; gap: 10px;">
+              <h2 id="displayDriverName" style="font-size: 1.45rem; font-weight:800;">M. Velu</h2>
+              <span class="badge badge-agristack" style="background:rgba(255,255,255,0.2); color:#fff; border-color:rgba(255,255,255,0.3);" data-i18n="driver_badge">
+                Government Registered Commercial Transporter
+              </span>
+            </div>
+            <p style="color:#fed7aa; font-size:0.88rem; margin-top:4px;">
+              🚛 Vehicle: <strong id="displayVehicleNumber">TN-38-AB-1234</strong> | DL: <strong id="displayDlNumber">DL-TN-38-2018-0091</strong> | 
+              Type: <span id="displayVehicleType">Minivan / Tata Ace (25 Qtl)</span> | Rate: <strong id="displayDriverRate">₹18/km</strong>
+            </p>
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <a href="/routing" class="btn btn-secondary" style="background:rgba(255,255,255,0.15); color:#fff; border-color:rgba(255,255,255,0.3);">
+              🗺️ Routing Grid
+            </a>
+            <button id="btnDriverLogout" class="btn btn-secondary" style="background:rgba(255,255,255,0.15); color:#fff; border-color:rgba(255,255,255,0.2);" data-i18n="btn_logout">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Transit Anchor -->
+      <div id="activeTransitContainer"></div>
+
+      <!-- Live Transporter Location Map -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🗺️</span>
+            <span>Commercial Transporter Telematics Grid</span>
+          </div>
+          <span class="badge badge-available">Live Dispatch Polling Active</span>
+        </div>
+
+        <div id="driverLiveMap" class="map-container"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Automated Dispatch Alert Modal -->
+  <div id="modalDispatchAlert" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 520px; border-top: 5px solid #ea580c;">
+      <div class="modal-header" style="background: #fff7ed;">
+        <div class="modal-title" style="color: #9a3412;">
+          <span>🚨</span>
+          <span data-i18n="dispatch_alert_box">New Pickup Request Dispatched!</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+          The FarmBranch automated matching engine has assigned you a priority agricultural freight transit.
+        </p>
+
+        <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; font-size: 0.88rem; line-height: 1.8;">
+          <p><strong>Pickup (Farmer):</strong> <span id="dispatchFarmerLoc"></span></p>
+          <p><strong>Drop-off (Mandi Hub):</strong> <span id="dispatchBuyerLoc"></span></p>
+          <p><strong>Crop Payload:</strong> <span id="dispatchCropDetails"></span></p>
+          <p><strong>Estimated Transit Distance:</strong> <span id="dispatchDistance"></span></p>
+          <p style="border-top: 1px solid #e2e8f0; margin-top: 8px; padding-top: 8px; font-size: 1.05rem;">
+            <strong>Guaranteed Freight Pay:</strong> <strong id="dispatchFreightCost" style="color: #047857;"></strong>
+          </p>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 12px;">
+          <button type="button" id="btnDismissDispatch" class="btn btn-secondary" style="flex: 1; padding: 12px;">
+            Dismiss
+          </button>
+          <button type="button" id="btnAcceptTransit" class="btn" style="flex: 2; background: #ea580c; color: #fff; padding: 12px;" data-i18n="btn_accept_transit">
+            🚚 Accept & Start Transit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <p data-i18n="footer_text">© 2026 FarmBranch. Ministry of Agriculture & Farmers Welfare, Government of India.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/driver.js"></script>
+</body>
+</html>

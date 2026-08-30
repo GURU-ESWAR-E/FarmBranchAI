@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="portal_title">FarmBranch - Indian AgriTech Portal</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+
+  <!-- Tri-color National Stripe -->
+  <div class="gov-tricolor-stripe"></div>
+
+  <!-- Government Branding Top Bar -->
+  <header class="gov-top-bar">
+    <div class="gov-top-container">
+      <div class="gov-emblem-badge">
+        <span class="emblem-icon">🏛️</span>
+        <div>
+          <strong data-i18n="gov_header_title">Government of India</strong>
+          <span style="margin: 0 6px; color: #cbd5e1;">|</span>
+          <span data-i18n="gov_header_sub">Ministry of Agriculture & Farmers Welfare | Digital AgriStack Integrated</span>
+        </div>
+      </div>
+      <div class="gov-links">
+        <span class="official-tag" data-i18n="badge_official">Official Government Portal</span>
+        <span class="badge badge-agristack" data-i18n="badge_agristack">AgriStack Verified</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Header -->
+  <nav class="main-header">
+    <div class="nav-container">
+      <a href="/" class="brand-section">
+        <div class="brand-logo-icon">🌾</div>
+        <div class="brand-text">
+          <h1>Farm<span>Branch</span></h1>
+          <p data-i18n="portal_tagline">National Unified Agri-Logistics & Mandi Trading Grid</p>
+        </div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="nav-links">
+          <a href="/" class="nav-item active" data-i18n="nav_home">Home</a>
+          <a href="/routing" class="nav-item">🗺️ Dynamic Marketplace Routing</a>
+          <a href="/fpo" class="nav-item" data-i18n="nav_fpo">FPO Hub</a>
+          <a href="/buyer" class="nav-item" data-i18n="nav_buyer">Buyer Mandi</a>
+          <a href="/driver" class="nav-item" data-i18n="nav_driver">Logistics Hub</a>
+        </div>
+
+        <!-- Language Switcher Dropdown -->
+        <div class="lang-selector-wrap">
+          <button id="langDropdownBtn" class="lang-select-btn">
+            🌐 <span id="currentLangLabel">English</span> ▾
+          </button>
+          <div id="langDropdownMenu" class="lang-dropdown-menu">
+            <div class="lang-option selected" data-lang="en">English (EN)</div>
+            <div class="lang-option" data-lang="hi">हिन्दी (Hindi)</div>
+            <div class="lang-option" data-lang="ta">தமிழ் (Tamil)</div>
+            <div class="lang-option" data-lang="mr">मराठी (Marathi)</div>
+            <div class="lang-option" data-lang="te">తెలుగు (Telugu)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Live APMC Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-label">
+      <span>🔴 LIVE</span>
+      <span data-i18n="live_ticker_title">Live APMC Tamil Nadu Cluster Rates</span>
+    </div>
+    <div class="ticker-track" aria-label="Live market prices">
+      <div class="ticker-content" id="dynamic-ticker">
+        <!-- Live prices loaded dynamically from API -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+    
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <div class="hero-tag">
+        <span>🇮🇳</span>
+        <span data-i18n="badge_agristack">AgriStack Verified Digital Portal</span>
+      </div>
+      <h2 class="hero-title" data-i18n="welcome_heading">Transforming Indian Agricultural Trade & Precision Logistics</h2>
+      <p class="hero-desc" data-i18n="welcome_subheading">
+        Direct Farmer-to-Mandi digital trading with instant AgriStack identity verification, automated dynamic freight dispatch, and official GST tax billing.
+      </p>
+      <div style="margin-top: 24px; display:flex; gap: 14px; flex-wrap:wrap;">
+        <a href="/routing" class="btn btn-primary" style="background:#10b981; border-color:#10b981; font-size:1rem; padding: 12px 24px;">
+          🗺️ Launch Dynamic Marketplace Routing & Estimator ➔
+        </a>
+        <a href="/fpo" class="btn btn-secondary" style="background:rgba(255,255,255,0.15); color:#fff; border-color:rgba(255,255,255,0.3); font-size:1rem; padding: 12px 24px;">
+          🌾 FPO Central Hub
+        </a>
+      </div>
+    </section>
+
+    <!-- Key Metrics / Statistics -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon emerald">🧑‍🌾</div>
+        <div class="stat-content">
+          <h4>10,480+</h4>
+          <p data-i18n="stat_farmers">AgriStack Farmers Registered</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon navy">🏛️</div>
+        <div class="stat-content">
+          <h4>248</h4>
+          <p data-i18n="stat_mandis">APMC Mandis Connected</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">🚚</div>
+        <div class="stat-content">
+          <h4>1,850+</h4>
+          <p data-i18n="stat_drivers">Verified Transporters</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">📦</div>
+        <div class="stat-content">
+          <h4>425,000</h4>
+          <p data-i18n="stat_quintals">Quintals Traded & Dispatched</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Routing Engine Highlight Banner -->
+    <section class="card-panel" style="background: linear-gradient(135deg, #1e293b, #0f172a); color:#fff; border-color: #334155; margin-bottom: 36px; padding: 28px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap: 20px;">
+        <div style="max-width: 750px;">
+          <div style="display:flex; align-items:center; gap: 10px; margin-bottom: 8px;">
+            <span style="background: #ea580c; color: #fff; padding: 3px 10px; border-radius: 4px; font-weight:700; font-size:0.75rem;">NEW MODULE</span>
+            <h3 style="font-size: 1.45rem; font-weight: 800;">Geospatial OSRM Routing & Multi-Tier Freight Matrix</h3>
+          </div>
+          <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+            Calculate real-time turn-by-turn road routes between farms and mandis, discover nearest buyers/farmers sorted by distance, and automatically calculate transport freight across <strong>Mini Car (₹12/km)</strong>, <strong>Tata Ace (₹18/km)</strong>, and <strong>10-Wheeler Trucks (₹35/km)</strong>.
+          </p>
+        </div>
+        <div>
+          <a href="/routing" class="btn btn-primary" style="padding: 14px 24px; font-size: 1rem;">
+            Open Routing Engine ➔
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Role Selection Portal Grid -->
+    <section>
+      <div class="role-section-header">
+        <h2 data-i18n="role_select_title">Select Your Dedicated Portal</h2>
+        <p>Access customized workflows tailored for Farmer Organizations, Mandi Traders, and Commercial Transporters.</p>
+      </div>
+
+      <div class="role-cards-grid">
+        <!-- 1. FPO Card -->
+        <div class="role-card fpo-theme">
+          <div>
+            <span class="role-badge">Producer Portal</span>
+            <div class="role-card-header">
+              <div class="role-card-icon">🌾</div>
+              <h3 class="role-card-title" data-i18n="card_fpo_title">Farmer Producer Organization (FPO)</h3>
+            </div>
+            <p class="role-card-desc" data-i18n="card_fpo_desc">
+              Register AgriStack farmers, analyze mandi rates, match verified crop lots, and generate official government tax bills & waybills.
+            </p>
+          </div>
+          <a href="/fpo" class="btn btn-primary btn-block" data-i18n="card_fpo_btn">Enter FPO Dashboard ➔</a>
+        </div>
+
+        <!-- 2. Buyer Mandi Card -->
+        <div class="role-card buyer-theme">
+          <div>
+            <span class="role-badge">Trader Portal</span>
+            <div class="role-card-header">
+              <div class="role-card-icon">🏢</div>
+              <h3 class="role-card-title" data-i18n="card_buyer_title">Crop Buyer / Mandi Trader</h3>
+            </div>
+            <p class="role-card-desc" data-i18n="card_buyer_desc">
+              Secure 2-step OTP mandi login, geospatial farmer discovery, crop bidding, and AgriStack two-way trade proposal confirmation.
+            </p>
+          </div>
+          <a href="/buyer" class="btn btn-navy btn-block" data-i18n="card_buyer_btn">Enter Buyer Mandi ➔</a>
+        </div>
+
+        <!-- 3. Driver Logistics Card -->
+        <div class="role-card driver-theme">
+          <div>
+            <span class="role-badge">Logistics Grid</span>
+            <div class="role-card-header">
+              <div class="role-card-icon">🚚</div>
+              <h3 class="role-card-title" data-i18n="card_driver_title">Logistics & Transporter / Driver</h3>
+            </div>
+            <p class="role-card-desc" data-i18n="card_driver_desc">
+              Register commercial vehicles, view live automated pickup dispatches matching your payload capacity, and lock transit.
+            </p>
+          </div>
+          <a href="/driver" class="btn btn-secondary btn-block" style="background:#ea580c; color:#fff; border-color:#ea580c;" data-i18n="card_driver_btn">Enter Transporter Hub ➔</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- First-Time Language Selection Modal -->
+  <div id="firstTimeLangModal" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🇮🇳</span>
+          <span data-i18n="first_lang_title">Welcome to FarmBranch | भाषा चुनें</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.92rem; color:var(--text-muted); margin-bottom: 20px;" data-i18n="first_lang_sub">
+          Please select your preferred language for the official Indian AgriTech portal.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn btn-secondary" style="justify-content: space-between; padding: 14px 20px; font-size:1rem;" onclick="FB_I18N.saveFirstTimeSelection('en')">
+            <span><strong>English</strong> (Default)</span>
+            <span>➔</span>
+          </button>
+          <button class="btn btn-secondary" style="justify-content: space-between; padding: 14px 20px; font-size:1rem;" onclick="FB_I18N.saveFirstTimeSelection('hi')">
+            <span><strong>हिन्दी</strong> (Hindi)</span>
+            <span>➔</span>
+          </button>
+          <button class="btn btn-secondary" style="justify-content: space-between; padding: 14px 20px; font-size:1rem;" onclick="FB_I18N.saveFirstTimeSelection('ta')">
+            <span><strong>தமிழ்</strong> (Tamil)</span>
+            <span>➔</span>
+          </button>
+          <button class="btn btn-secondary" style="justify-content: space-between; padding: 14px 20px; font-size:1rem;" onclick="FB_I18N.saveFirstTimeSelection('mr')">
+            <span><strong>मराठी</strong> (Marathi)</span>
+            <span>➔</span>
+          </button>
+          <button class="btn btn-secondary" style="justify-content: space-between; padding: 14px 20px; font-size:1rem;" onclick="FB_I18N.saveFirstTimeSelection('te')">
+            <span><strong>తెలుగు</strong> (Telugu)</span>
+            <span>➔</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div>
+        <p data-i18n="footer_text">© 2026 FarmBranch. Ministry of Agriculture & Farmers Welfare, Government of India. All Rights Reserved.</p>
+      </div>
+      <div style="display:flex; gap: 16px; font-size: 0.8rem;">
+        <span>AgriStack Integration</span>
+        <span>e-NAM Protocol</span>
+        <span>National Informatics Centre Standard</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/auth.js"></script>
+  
+  <!-- Dynamic Ticker Script -->
+  <script>
+    /**
+     * Load live crop prices from the API and populate the dynamic ticker
+     */
+    async function loadLivePrices() {
+      try {
+        const response = await fetch('/api/live-prices');
+        const result = await response.json();
+        
+        if (result.status === 'success' && result.data && Array.isArray(result.data)) {
+          const tickerContainer = document.getElementById('dynamic-ticker');
+          
+          if (!tickerContainer) {
+            console.error('Ticker container not found');
+            return;
+          }
+          
+          // Clear existing content
+          tickerContainer.innerHTML = '';
+          
+          // Build and insert ticker items from real data
+          result.data.forEach(item => {
+            const tickerItem = document.createElement('span');
+            tickerItem.className = 'ticker-item';
+            
+            // Format HTML with commodity name and price
+            const html = `🌱 ${item.commodity}: <span class="rate">₹${item.price.toLocaleString('en-IN')}/Qtl</span>`;
+            tickerItem.innerHTML = html;
+            
+            tickerContainer.appendChild(tickerItem);
+          });
+          
+          console.log(`Successfully loaded ${result.data.length} live prices`);
+        } else {
+          console.warn('Invalid response from live prices API:', result);
+        }
+      } catch (error) {
+        console.error('Error loading live prices:', error);
+        // Fallback: show a message in the ticker
+        const tickerContainer = document.getElementById('dynamic-ticker');
+        if (tickerContainer) {
+          tickerContainer.innerHTML = '<span class="ticker-item" style="color: #ef4444;">⚠️ Unable to load live prices. Please refresh the page.</span>';
+        }
+      }
+    }
+    
+    // Load prices when DOM is ready
+    document.addEventListener('DOMContentLoaded', loadLivePrices);
+  </script>
+</body>
+</html>

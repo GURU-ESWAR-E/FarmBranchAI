@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="portal_title">Dynamic Marketplace Routing - FarmBranch</title>
+
+  <!-- Leaflet CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+
+  <style>
+    .routing-controls-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .pricing-breakdown-card {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pricing-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-item .label {
+      font-size: 0.78rem;
+      color: #166534;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .pricing-item .value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #047857;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tri-color National Stripe -->
+  <div class="gov-tricolor-stripe"></div>
+
+  <!-- Government Branding Top Bar -->
+  <header class="gov-top-bar">
+    <div class="gov-top-container">
+      <div class="gov-emblem-badge">
+        <span class="emblem-icon">🏛️</span>
+        <div>
+          <strong data-i18n="gov_header_title">Government of India</strong>
+          <span style="margin: 0 6px; color: #cbd5e1;">|</span>
+          <span data-i18n="gov_header_sub">Ministry of Agriculture & Farmers Welfare | Digital AgriStack Integrated</span>
+        </div>
+      </div>
+      <div class="gov-links">
+        <span class="official-tag" data-i18n="badge_official">Official Government Portal</span>
+        <span class="badge badge-agristack">Geospatial OSRM Integrated</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Header -->
+  <nav class="main-header">
+    <div class="nav-container">
+      <a href="/" class="brand-section">
+        <div class="brand-logo-icon">🗺️</div>
+        <div class="brand-text">
+          <h1>Farm<span>Branch</span></h1>
+          <p data-i18n="portal_tagline">National Unified Agri-Logistics & Mandi Trading Grid</p>
+        </div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="nav-links">
+          <a href="/" class="nav-item" data-i18n="nav_home">Home</a>
+          <a href="/routing" class="nav-item active">🗺️ Dynamic Marketplace Routing</a>
+          <a href="/fpo" class="nav-item" data-i18n="nav_fpo">FPO Hub</a>
+          <a href="/buyer" class="nav-item" data-i18n="nav_buyer">Buyer Mandi</a>
+          <a href="/driver" class="nav-item" data-i18n="nav_driver">Logistics Hub</a>
+        </div>
+
+        <!-- Language Switcher Dropdown -->
+        <div class="lang-selector-wrap">
+          <button id="langDropdownBtn" class="lang-select-btn">
+            🌐 <span id="currentLangLabel">English</span> ▾
+          </button>
+          <div id="langDropdownMenu" class="lang-dropdown-menu">
+            <div class="lang-option selected" data-lang="en">English (EN)</div>
+            <div class="lang-option" data-lang="hi">हिन्दी (Hindi)</div>
+            <div class="lang-option" data-lang="ta">தமிழ் (Tamil)</div>
+            <div class="lang-option" data-lang="mr">मराठी (Marathi)</div>
+            <div class="lang-option" data-lang="te">తెలుగు (Telugu)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-wrapper">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+      <a href="/" data-i18n="nav_home">Home</a>
+      <span class="separator">/</span>
+      <span>Geospatial Routing & Multi-Tier Freight Estimator</span>
+    </div>
+
+    <!-- Header Panel -->
+    <div class="card-panel" style="background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%); color: #fff; border:none; margin-bottom: 20px; padding: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap: 12px;">
+        <div>
+          <span class="badge badge-agristack" style="background:rgba(255,255,255,0.2); color:#fff; border-color:rgba(255,255,255,0.3); margin-bottom:6px;">
+            AI Geospatial Routing Engine
+          </span>
+          <h2 style="font-size: 1.6rem; font-weight:800;">Precision Farm-to-Mandi Dynamic Road Routing</h2>
+          <p style="color: #cbd5e1; font-size: 0.9rem; margin-top:4px;">
+            Real-time OSRM road distance, live driver dispatch matrix, and official Multi-Tier Vehicle Freight cost calculator.
+          </p>
+        </div>
+        <div id="statusBadge" class="badge badge-approved" style="font-size:0.9rem; padding: 8px 14px;">
+          🟢 Database Ready (Click map or choose dropdown)
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="routing-controls-card">
+      <div style="display:flex; align-items:center; gap: 10px; flex-wrap:wrap;">
+        <label class="form-label" style="margin:0;"><strong>Perspective:</strong></label>
+        <select id="userPerspective" class="form-control" style="width: auto; font-weight:600;" onchange="onPerspectiveChanged()">
+          <option value="farmer">🌾 Farmer (Discover Mandi Buyers)</option>
+          <option value="buyer">🏢 Mandi Buyer (Discover Farmers)</option>
+        </select>
+        
+        <button class="btn btn-sm btn-navy" onclick="useGPSLocation()">
+          📍 Use My GPS
+        </button>
+        <button class="btn btn-sm btn-secondary" onclick="resetRoutingWorkspace()">
+          🔄 Reset Route
+        </button>
+      </div>
+
+      <div style="display:flex; align-items:center; gap: 10px; flex-wrap:wrap;">
+        <label class="form-label" style="margin:0;"><strong>Destination:</strong></label>
+        <select id="targetSelect" class="form-control" style="width: 260px;" onchange="onTargetSelectChanged()">
+          <option value="">-- Select Destination Target --</option>
+        </select>
+      </div>
+
+      <div style="display:flex; align-items:center; gap: 10px; flex-wrap:wrap;">
+        <label class="form-label" style="margin:0;"><strong>Filter by Crop:</strong></label>
+        <select id="cropFilterSelect" class="form-control" style="width: 180px;" onchange="applyCropFilter()">
+          <option value="All Crops" selected>All Crops</option>
+          <option value="Banana">Banana</option>
+          <option value="Tomato">Tomato</option>
+          <option value="Paddy">Paddy</option>
+          <option value="Turmeric">Turmeric</option>
+          <option value="Coconut">Coconut</option>
+          <option value="Cotton">Cotton</option>
+          <option value="Onion">Onion</option>
+        </select>
+
+        <button id="voiceAssistBtn" class="btn btn-sm btn-secondary" type="button" onclick="toggleVoiceAssist()">
+          🎙️ Voice Assist
+        </button>
+        <span id="voiceAssistStatus" style="font-size:0.8rem; color:var(--text-muted); min-width: 150px;">Ready for voice input</span>
+      </div>
+
+      <div style="display:flex; align-items:center; gap: 10px; flex-wrap:wrap;">
+        <label class="form-label" style="margin:0;"><strong>Vehicle Tier:</strong></label>
+        <select id="vehicleTierSelect" class="form-control" style="width: 280px; font-weight:600;" onchange="recalculateFreightCost()">
+          <option value="Minivan / Tata Ace" selected>Minivan / Tata Ace (Base ₹400 + ₹18/km)</option>
+          <option value="Mini Car / Pickup">Mini Car / Pickup (Base ₹250 + ₹12/km)</option>
+          <option value="Commercial Truck (10-Wheeler / Eicher)">Commercial Truck (Base ₹1000 + ₹35/km)</option>
+        </select>
+
+        <div style="display:flex; align-items:center; gap:6px;">
+          <label class="form-label" style="margin:0;"><strong>Qty:</strong></label>
+          <input type="number" id="routingQuantity" class="form-control" value="50" min="1" style="width: 80px;" oninput="recalculateFreightCost()">
+          <small style="color:var(--text-muted);">Qtl</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Container -->
+    <div class="card-panel" style="padding:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-size:0.95rem; font-weight:700; color:var(--navy);">
+          📍 Interactive Tamil Nadu Agricultural Corridor
+        </div>
+        <div id="routeMetricsLabel" style="font-size:0.88rem; color:#047857; font-weight:700;">
+          Select a start point on the map or choose a destination target.
+        </div>
+      </div>
+
+      <div id="routingMap" class="map-container" style="height: 520px;"></div>
+
+      <!-- Multi-Tier Cost Breakdown Box -->
+      <div id="costBreakdownContainer" class="pricing-breakdown-card">
+        <div class="pricing-item">
+          <span class="label">Driving Distance</span>
+          <span class="value" id="dispDistance">0.0 KM</span>
+        </div>
+        <div class="pricing-item">
+          <span class="label">Vehicle Base Fare</span>
+          <span class="value" id="dispBaseFare">₹400</span>
+        </div>
+        <div class="pricing-item">
+          <span class="label">Mileage Transit Fare</span>
+          <span class="value" id="dispMileageFare">₹0</span>
+        </div>
+        <div class="pricing-item">
+          <span class="label">Payload Handling (₹5/Qtl)</span>
+          <span class="value" id="dispHanlingFare">₹250</span>
+        </div>
+        <div class="pricing-item">
+          <span class="label" style="color:#0f172a;">Total Transport Freight</span>
+          <span class="value" id="dispTotalFreight" style="color:#ea580c; font-size:1.35rem;">₹650</span>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="btnBookFromRouting" onclick="bookCurrentRouteAndInvoice()">
+            ⚡ Book Transit & Generate Official Bill
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Printable Invoice Injection Area -->
+    <div id="routingInvoiceContainer" style="display:none; margin-bottom: 24px;"></div>
+
+    <!-- Database Records Table -->
+    <div class="card-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>📊</span>
+          <span id="dbTableTitle">Registered Marketplace Database Records</span>
+        </div>
+        <span class="badge badge-agristack">Live Synchronized SQLite Grid</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr id="routingTableHead">
+              <th>ID</th>
+              <th>Name & Organization</th>
+              <th>Location</th>
+              <th>Crop & Grade</th>
+              <th>Available Qty</th>
+              <th>Price Index</th>
+              <th>Distance</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="routingTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer no-print">
+    <div class="footer-container">
+      <p data-i18n="footer_text">© 2026 FarmBranch. Ministry of Agriculture & Farmers Welfare, Government of India.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/auth.js"></script>
+  
+  <script>
+    let routingMap = null;
+    let startMarker = null;
+    let endMarker = null;
+    let routePolyline = null;
+    let nearbyLayerGroup = null;
+    let allFarmers = [];
+    let allBuyers = [];
+    let availableTargets = [];
+    let currentCalculatedDistance = 25.0; // default KM
+
+    function normalizeCropName(value) {
+      return String(value || '').toLowerCase().replace(/[^a-z]/g, '');
+    }
+
+    function getSelectedCropFilter() {
+      const filterSelect = document.getElementById('cropFilterSelect');
+      return filterSelect ? (filterSelect.value || 'All Crops') : 'All Crops';
+    }
+
+    function cropMatchesSelectedCrop(target, perspective) {
+      const selectedCrop = getSelectedCropFilter();
+      if (!selectedCrop || selectedCrop === 'All Crops') return true;
+
+      const cropValue = perspective === 'farmer'
+        ? (target.crop_demanded || target.crop_type || '')
+        : (target.crop_type || target.crop_demanded || '');
+
+      const normalizedTargetCrop = normalizeCropName(cropValue);
+      const normalizedSelectedCrop = normalizeCropName(selectedCrop);
+
+      return normalizedTargetCrop === normalizedSelectedCrop ||
+        normalizedTargetCrop.includes(normalizedSelectedCrop) ||
+        normalizedSelectedCrop.includes(normalizedTargetCrop);
+    }
+
+    function getFilteredTargets() {
+      const perspective = document.getElementById('userPerspective').value;
+      const targetPool = perspective === 'farmer' ? allBuyers : allFarmers;
+      return targetPool.filter((target) => cropMatchesSelectedCrop(target, perspective));
+    }
+
+    const VEHICLE_RATES = {
+      'Mini Car / Pickup': { base: 250, rate: 12, name: 'Mini Car / Pickup' },
+      'Minivan / Tata Ace': { base: 400, rate: 18, name: 'Minivan / Tata Ace' },
+      'Commercial Truck (10-Wheeler / Eicher)': { base: 1000, rate: 35, name: 'Commercial Truck (10-Wheeler / Eicher)' }
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      initMap();
+      await fetchMarketData();
+      refreshWorkspace();
+    });
+
+    function initMap() {
+      routingMap = L.map('routingMap').setView([10.8505, 78.7047], 8);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors | FarmBranch OSRM Routing Grid'
+      }).addTo(routingMap);
+
+      nearbyLayerGroup = L.layerGroup().addTo(routingMap);
+
+      routingMap.on('click', (e) => {
+        if (!startMarker) {
+          setStartPoint(e.latlng.lat, e.latlng.lng, "Origin Position (You)");
+        } else {
+          setEndPoint(e.latlng.lat, e.latlng.lng, "Selected Destination");
+        }
+      });
+    }
+
+    async function fetchMarketData() {
+      try {
+        const res = await fetch('/api/market/all-pins');
+        const data = await res.json();
+        if (data.status === 'success') {
+          allFarmers = data.farmers || [];
+          allBuyers = data.buyers || [];
+        }
+      } catch (e) {
+        console.error('Failed to fetch market pins:', e);
+      }
+    }
+
+    function refreshWorkspace() {
+      const perspective = document.getElementById('userPerspective').value;
+      const isFarmer = perspective === 'farmer';
+      document.getElementById('dbTableTitle').textContent = isFarmer ? 'Available Mandi Buyers & APMC Hubs' : 'Registered AgriStack Farmers';
+
+      // Set default start point to Coimbatore center if unset
+      if (!startMarker) {
+        const defaultLat = isFarmer ? (allFarmers[0]?.latitude || 10.6580) : (allBuyers[0]?.latitude || 11.0064);
+        const defaultLng = isFarmer ? (allFarmers[0]?.longitude || 77.0086) : (allBuyers[0]?.longitude || 76.9530);
+        const defaultName = isFarmer ? (allFarmers[0]?.name || "Source Farmer") : (allBuyers[0]?.name || "Mandi Hub");
+        setStartPoint(defaultLat, defaultLng, defaultName, false);
+      }
+
+      plotNearbyTargets();
+      renderTableRecords();
+    }
+
+    function onPerspectiveChanged() {
+      if (startMarker) {
+        routingMap.removeLayer(startMarker);
+        startMarker = null;
+      }
+      if (endMarker) {
+        routingMap.removeLayer(endMarker);
+        endMarker = null;
+      }
+      if (routePolyline) {
+        routingMap.removeLayer(routePolyline);
+        routePolyline = null;
+      }
+      refreshWorkspace();
+    }
+
+    function setStartPoint(lat, lng, label = "Origin", autoCenter = true) {
+      if (startMarker) routingMap.removeLayer(startMarker);
+      if (routePolyline) routingMap.removeLayer(routePolyline);
+
+      const startIcon = L.divIcon({
+        className: 'custom-start-pin',
+        html: `<div style="background-color: #047857; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 3px solid #ffffff; box-shadow: 0 0 10px rgba(4, 120, 87, 0.6);">📍</div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+      });
+
+      startMarker = L.marker([lat, lng], { icon: startIcon, draggable: true }).addTo(routingMap)
+        .bindPopup(`<b>${label} (Origin)</b><br>Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`).openPopup();
+
+      startMarker.on('dragend', () => {
+        plotNearbyTargets();
+        if (endMarker) {
+          calculateRoadRoute(startMarker.getLatLng(), endMarker.getLatLng());
+        }
+      });
+
+      if (autoCenter) routingMap.setView([lat, lng], 9);
+      plotNearbyTargets();
+    }
+
+    function setEndPoint(lat, lng, label = "Destination") {
+      if (endMarker) routingMap.removeLayer(endMarker);
+
+      const endIcon = L.divIcon({
+        className: 'custom-end-pin',
+        html: `<div style="background-color: #1d4ed8; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 3px solid #ffffff; box-shadow: 0 0 10px rgba(29, 78, 216, 0.6);">🏢</div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+      });
+
+      endMarker = L.marker([lat, lng], { icon: endIcon, draggable: true }).addTo(routingMap)
+        .bindPopup(`<b>${label} (Destination)</b>`).openPopup();
+
+      endMarker.on('dragend', () => {
+        if (startMarker) calculateRoadRoute(startMarker.getLatLng(), endMarker.getLatLng());
+      });
+
+      if (startMarker) {
+        calculateRoadRoute(startMarker.getLatLng(), endMarker.getLatLng());
+      }
+    }
+
+    function plotNearbyTargets() {
+      if (!startMarker) return;
+      nearbyLayerGroup.clearLayers();
+
+      const start = startMarker.getLatLng();
+      const isFarmer = document.getElementById('userPerspective').value === 'farmer';
+      const filteredTargetPool = getFilteredTargets();
+
+      availableTargets = filteredTargetPool.map((t, idx) => {
+        const dist = haversine(start.lat, start.lng, t.latitude, t.longitude);
+        return { ...t, distance_km: dist, originalIdx: idx };
+      });
+
+      availableTargets.sort((a, b) => a.distance_km - b.distance_km);
+
+      const select = document.getElementById('targetSelect');
+      select.innerHTML = '<option value="">-- Select Destination Target --</option>';
+
+      if (availableTargets.length === 0) {
+        select.innerHTML = '<option value="">-- No matching destinations --</option>';
+        return;
+      }
+
+      availableTargets.forEach((t, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${t.name} (${t.location} - ${t.distance_km.toFixed(1)} km)`;
+        select.appendChild(opt);
+
+        const pinIcon = L.divIcon({
+          className: 'custom-target-pin',
+          html: `<div style="background-color: ${isFarmer ? '#3b82f6' : '#10b981'}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">${isFarmer ? '🏢' : '🌾'}</div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        const m = L.marker([t.latitude, t.longitude], { icon: pinIcon }).addTo(nearbyLayerGroup);
+        m.bindPopup(`
+          <div class="map-popup-card">
+            <h4>${t.name}</h4>
+            <p>📍 ${t.location} | 📞 ${t.phone}</p>
+            <p><strong>${isFarmer ? 'Demand' : 'Crop'}:</strong> ${isFarmer ? t.crop_demanded : t.crop_type}</p>
+            <p><strong>Distance:</strong> ${t.distance_km.toFixed(1)} KM</p>
+            <button class="btn btn-sm btn-primary" style="width:100%; margin-top:6px;" onclick="selectTargetFromPopup(${i})">
+              Route to this Hub ➔
+            </button>
+          </div>
+        `);
+      });
+    }
+
+    function onTargetSelectChanged() {
+      const idx = document.getElementById('targetSelect').value;
+      if (idx === "") return;
+      selectTargetFromPopup(idx);
+    }
+
+    window.selectTargetFromPopup = function(idx) {
+      const target = availableTargets[idx];
+      if (!target) return;
+      document.getElementById('targetSelect').value = idx;
+      setEndPoint(target.latitude, target.longitude, target.name);
+    };
+
+    async function calculateRoadRoute(startLatLng, endLatLng) {
+      document.getElementById('routeMetricsLabel').textContent = "Calculating OSRM shortest road transit route...";
+      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${startLatLng.lng},${startLatLng.lat};${endLatLng.lng},${endLatLng.lat}?overview=full&geometries=geojson`;
+
+      try {
+        const res = await fetch(osrmUrl);
+        const data = await res.json();
+
+        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          currentCalculatedDistance = parseFloat((route.distance / 1000).toFixed(2));
+          const durationMins = Math.round(route.duration / 60);
+
+          document.getElementById('routeMetricsLabel').innerHTML = `
+            🟢 OSRM Road Distance: <strong>${currentCalculatedDistance} KM</strong> | Estimated Travel Time: <strong>${durationMins} mins</strong>
+          `;
+
+          if (routePolyline) routingMap.removeLayer(routePolyline);
+          routePolyline = L.geoJSON(route.geometry, {
+            style: { color: '#16a34a', weight: 6, opacity: 0.85 }
+          }).addTo(routingMap);
+          routingMap.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
+
+        } else {
+          fallbackHaversineRoute(startLatLng, endLatLng);
+        }
+      } catch (err) {
+        console.warn('OSRM router failed, falling back to Haversine route:', err);
+        fallbackHaversineRoute(startLatLng, endLatLng);
+      }
+
+      recalculateFreightCost();
+    }
+
+    function fallbackHaversineRoute(startLatLng, endLatLng) {
+      currentCalculatedDistance = parseFloat(haversine(startLatLng.lat, startLatLng.lng, endLatLng.lat, endLatLng.lng).toFixed(2));
+      document.getElementById('routeMetricsLabel').innerHTML = `
+        🟡 Direct Distance: <strong>${currentCalculatedDistance} KM</strong> (Haversine Grid)
+      `;
+
+      if (routePolyline) routingMap.removeLayer(routePolyline);
+      routePolyline = L.polyline([[startLatLng.lat, startLatLng.lng], [endLatLng.lat, endLatLng.lng]], {
+        color: '#16a34a', weight: 4, dashArray: '6, 8'
+      }).addTo(routingMap);
+      routingMap.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
+    }
+
+    function recalculateFreightCost() {
+      const vTierKey = document.getElementById('vehicleTierSelect').value;
+      const vConf = VEHICLE_RATES[vTierKey] || VEHICLE_RATES['Minivan / Tata Ace'];
+      const qty = parseFloat(document.getElementById('routingQuantity').value) || 50;
+
+      const baseFare = vConf.base;
+      const mileageFare = Math.round(currentCalculatedDistance * vConf.rate);
+      const handlingSurcharge = Math.round(qty * 5);
+      const totalFreight = baseFare + mileageFare + handlingSurcharge;
+
+      document.getElementById('dispDistance').textContent = `${currentCalculatedDistance} KM`;
+      document.getElementById('dispBaseFare').textContent = `₹${baseFare}`;
+      document.getElementById('dispMileageFare').textContent = `₹${mileageFare} (${currentCalculatedDistance}km × ₹${vConf.rate})`;
+      document.getElementById('dispHanlingFare').textContent = `₹${handlingSurcharge} (${qty} Qtl × ₹5)`;
+      document.getElementById('dispTotalFreight').textContent = `₹${totalFreight.toLocaleString()}`;
+    }
+
+    async function bookCurrentRouteAndInvoice() {
+      const isFarmer = document.getElementById('userPerspective').value === 'farmer';
+      const targetIdx = document.getElementById('targetSelect').value;
+      const vTier = document.getElementById('vehicleTierSelect').value;
+      const qty = parseFloat(document.getElementById('routingQuantity').value) || 50;
+
+      let farmerId = allFarmers[0]?.farmer_id || 'AGRI-TN-88219';
+      let buyerId = allBuyers[0]?.buyer_id || 1;
+
+      if (targetIdx !== "" && availableTargets[targetIdx]) {
+        if (isFarmer) {
+          buyerId = availableTargets[targetIdx].buyer_id;
+        } else {
+          farmerId = availableTargets[targetIdx].farmer_id;
+        }
+      }
+
+      const payload = {
+        farmer_id: farmerId,
+        buyer_id: buyerId,
+        vehicle_type: vTier,
+        distance_km: currentCalculatedDistance,
+        quantity_quintals: qty
+      };
+
+      try {
+        const res = await fetch('/api/logistics/calculate-and-bill', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          FB_AUTH.showToast('Official Bill Generated & Transporter Assigned!', 'success');
+          renderInvoiceView(data.invoice, data.farmer, data.buyer);
+        } else {
+          FB_AUTH.showToast(data.message || 'Booking failed', 'error');
+        }
+      } catch (err) {
+        FB_AUTH.showToast('Error booking route.', 'error');
+      }
+    }
+
+    function renderInvoiceView(inv, farmer, buyer) {
+      const container = document.getElementById('routingInvoiceContainer');
+      container.style.display = 'block';
+      container.scrollIntoView({ behavior: 'smooth' });
+
+      container.innerHTML = `
+        <div class="tax-invoice-sheet" id="printArea">
+          <div class="invoice-header-gov">
+            <div style="display:flex; justify-content:center; align-items:center; gap: 12px; margin-bottom: 6px;">
+              <span style="font-size: 1.8rem;">🏛️</span>
+              <div>
+                <h2>GOVERNMENT OF INDIA - OFFICIAL TAX INVOICE & e-WAY BILL</h2>
+                <p>Ministry of Agriculture & Farmers Welfare | National Electronic Mandi Integration (e-NAM / AgriStack)</p>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size: 0.8rem; font-weight: 600; color: #334155; margin-top: 10px; border-top: 1px solid #cbd5e1; padding-top: 6px;">
+              <span>Waybill No: <strong>FARM-BILL-2026-${inv.order_id}</strong></span>
+              <span>Date & Time: <strong>${inv.created_at || new Date().toLocaleString()}</strong></span>
+              <span>Status: <strong style="color:#047857;">VERIFIED & ACTIVE</strong></span>
+            </div>
+          </div>
+
+          <div class="invoice-meta-grid">
+            <div class="invoice-party-box">
+              <h5>Consignor / Farmer Details</h5>
+              <p><strong>Name:</strong> ${farmer.name}</p>
+              <p><strong>AgriStack ID:</strong> ${farmer.farmer_id}</p>
+              <p><strong>Origin:</strong> ${farmer.location}</p>
+              <p><strong>Contact:</strong> ${farmer.phone}</p>
+            </div>
+
+            <div class="invoice-party-box">
+              <h5>Consignee / Mandi Buyer Details</h5>
+              <p><strong>Firm / Mandi:</strong> ${buyer.name}</p>
+              <p><strong>Mandi License:</strong> ${buyer.unique_license_id}</p>
+              <p><strong>Destination:</strong> ${buyer.location}</p>
+              <p><strong>Contact:</strong> ${buyer.phone}</p>
+            </div>
+          </div>
+
+          <div class="invoice-party-box" style="margin-bottom: 18px;">
+            <h5>Transport & Vehicle Allocation</h5>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+              <p><strong>Vehicle Tier:</strong> ${inv.vehicle_type}</p>
+              <p><strong>Assigned Driver:</strong> ${inv.driver_name}</p>
+              <p><strong>Vehicle RC:</strong> ${inv.driver_rc}</p>
+              <p><strong>Transit Distance:</strong> ${inv.transport_distance_km} KM</p>
+            </div>
+          </div>
+
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Item #</th>
+                <th>Crop Description & Grade</th>
+                <th>Quantity (Quintals)</th>
+                <th>Agreed Rate (₹ / Qtl)</th>
+                <th>Total Value (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>${inv.crop_type}</strong> (Govt AgriStack Grade A)</td>
+                <td>${inv.quantity_quintals} Qtl</td>
+                <td>₹${inv.agreed_price_per_qtl.toLocaleString()}</td>
+                <td>₹${inv.crop_total_cost.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align: right; font-weight: 600;">Vehicle Base Fare:</td>
+                <td style="font-weight: 700;">₹${inv.base_fare || 400}</td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align: right; font-weight: 600;">Mileage Charge (${inv.transport_distance_km} km @ ₹${inv.rate_per_km}/km):</td>
+                <td style="font-weight: 700;">₹${Math.round(inv.transport_distance_km * inv.rate_per_km).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align: right; font-weight: 600;">Handling & Loading Surcharge (${inv.quantity_quintals} Qtl @ ₹5):</td>
+                <td style="font-weight: 700;">₹${inv.handling_surcharge || 250}</td>
+              </tr>
+              <tr class="invoice-total-row">
+                <td colspan="4" style="text-align: right; font-size: 1rem; color: #047857;">GRAND TOTAL PAYABLE (INR):</td>
+                <td style="font-size: 1.1rem; color: #047857;">₹${inv.grand_total.toLocaleString()}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="invoice-signatures">
+            <div>
+              <p>Authorized Signatory (FPO / Mandi Officer)</p>
+              <p style="margin-top: 24px; font-weight: 700;">[ Electronically Signed via AgriStack PKI ]</p>
+            </div>
+            <div style="text-align: right;">
+              <p>Consignee Mandi Acceptance Stamp</p>
+              <p style="margin-top: 24px; font-weight: 700;">[ Verified Mandi Trader Stamp ]</p>
+            </div>
+          </div>
+
+          <div class="no-print" style="margin-top: 20px; display: flex; gap: 12px; justify-content: flex-end;">
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Print Official Invoice / PDF</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTableRecords() {
+      const isFarmer = document.getElementById('userPerspective').value === 'farmer';
+      const records = getFilteredTargets();
+      const tbody = document.getElementById('routingTableBody');
+      const start = startMarker ? startMarker.getLatLng() : { lat: 10.8505, lng: 78.7047 };
+
+      if (!records.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align:center; color: var(--text-muted); padding: 24px;">
+              No destinations match the selected crop filter.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = records.map((r, idx) => {
+        const dist = haversine(start.lat, start.lng, r.latitude, r.longitude);
+        return `
+          <tr>
+            <td><span class="badge ${isFarmer ? 'badge-approved' : 'badge-agristack'}">${isFarmer ? r.unique_license_id : r.farmer_id}</span></td>
+            <td><strong>${r.name}</strong><br><small style="color:var(--text-muted)">${r.phone}</small></td>
+            <td>${r.location}</td>
+            <td><strong>${isFarmer ? r.crop_demanded : r.crop_type}</strong></td>
+            <td>${isFarmer ? 'Demand Match' : r.quantity_quintals + ' Qtl'}</td>
+            <td style="color:#047857; font-weight:700;">₹${(isFarmer ? r.buyer_max_bid : r.expected_price).toLocaleString()}</td>
+            <td style="font-weight:700; color:#1d4ed8;">${dist.toFixed(1)} km</td>
+            <td>
+              <button class="btn btn-sm btn-primary" onclick="selectTargetFromTable(${r.latitude}, ${r.longitude}, '${r.name}')">
+                📍 Route Here
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.selectTargetFromTable = function(lat, lng, name) {
+      setEndPoint(lat, lng, name);
+    };
+
+    function useGPSLocation() {
+      if (navigator.geolocation) {
+        FB_AUTH.showToast('Fetching GPS coordinates...', 'info');
+        navigator.geolocation.getCurrentPosition(pos => {
+          setStartPoint(pos.coords.latitude, pos.coords.longitude, "Your Live GPS Location");
+          FB_AUTH.showToast('GPS Location locked!', 'success');
+        }, () => {
+          FB_AUTH.showToast('GPS permission denied. Using default location.', 'warning');
+        });
+      }
+    }
+
+    const VOICE_CROP_ALIASES = {
+      Banana: ['banana', 'bananas', 'kela', 'kele', 'vazhai', 'vazhaipazham', 'arati', 'keli', 'केला', 'केळी', 'வாழை', 'అరటి'],
+      Tomato: ['tomato', 'tomatoes', 'tamatar', 'thakkali', 'tamata', 'टमाटर', 'टोमॅटो', 'தக்காளி', 'టమాటా'],
+      Paddy: ['paddy', 'rice', 'dhan', 'chawal', 'nel', 'arisi', 'vari', 'vadlu', 'bhat', 'धान', 'चावल', 'நெல்', 'వరి', 'भात'],
+      Turmeric: ['turmeric', 'haldi', 'manjal', 'pasupu', 'halad', 'हल्दी', 'मంజळ', 'மஞ்சள்', 'పసుపు', 'हळद'],
+      Coconut: ['coconut', 'copra', 'nariyal', 'thengai', 'kobbari', 'khobare', 'naral', 'नारियल', 'தேங்காய்', 'కొబ్బరి', 'नारळ'],
+      Cotton: ['cotton', 'kapas', 'paruthi', 'patthi', 'kapus', 'कपास', 'பருத்தி', 'పత్తి', 'कापूस'],
+      Onion: ['onion', 'pyaz', 'kanda', 'vengayam', 'ullipaya', 'प्याज', 'வெங்காயம்', 'ఉల్లిపాయ', 'कांदा']
+    };
+
+    const VOICE_NUMBER_ALIASES = {
+      1: ['one', 'ek', 'एक', 'एकम', 'onnu', 'ஒன்று', 'okati', 'ఒకటి'],
+      2: ['two', 'do', 'दो', 'rendu', 'ரெண்டு', 'రెండు', 'don', 'दोन'],
+      3: ['three', 'teen', 'तीन', 'moodu', 'மூன்று', 'moodu', 'మూడు'],
+      4: ['four', 'chaar', 'चार', 'naalu', 'நாலு', 'naalugu', 'నాలుగు'],
+      5: ['five', 'paanch', 'पांच', 'पाँच', 'anju', 'அஞ்சு', 'aidu', 'ఐదు', 'paach', 'पाच'],
+      10: ['ten', 'das', 'दस', 'pathu', 'பத்து', 'padi', 'పది', 'daha', 'दहा'],
+      20: ['twenty', 'bees', 'बीस', 'irubadhu', 'இருபது', 'iravai', 'ఇరవై', 'vees', 'वीस'],
+      30: ['thirty', 'tees', 'तीस', 'muppadhu', 'முப்பது', 'muppai', 'ముప్పై'],
+      40: ['forty', 'chaalis', 'चालीस', 'naappadhu', 'நாற்பது', 'nalabhai', 'నలభై'],
+      50: ['fifty', 'pachas', 'पचास', 'aimbadhu', 'ஐம்பது', 'yabhai', 'యాభై', 'pannas', 'पन्नास'],
+      60: ['sixty', 'saath', 'साठ'],
+      70: ['seventy', 'sattar', 'सत्तर'],
+      80: ['eighty', 'assi', 'अस्सी'],
+      90: ['ninety', 'nabbe', 'नब्बे'],
+      100: ['hundred', 'sau', 'सौ', 'nooru', 'நூறு', 'vandha', 'వంద', 'shambhar', 'शंभर']
+    };
+
+    const VOICE_DESTINATION_ALIASES = {
+      chennai: ['chennai', 'சென்னை', 'चेन्नई', 'చెన్నై'],
+      coimbatore: ['coimbatore', 'kovai', 'கோயம்புத்தூர்', 'கோவை', 'कोयंबटूर', 'कोवाई', 'కోయంబత్తూరు'],
+      madurai: ['madurai', 'மதுரை', 'मदुरै', 'మదురై'],
+      trichy: ['trichy', 'tiruchirappalli', 'திருச்சி', 'திருச்சிராப்பள்ளி', 'திருச்சிராப்பள்ளம்', 'त्रिची', 'திருச்சிராப்பள்ளி', 'తిరుచిరాపల్లి'],
+      salem: ['salem', 'சேலம்', 'सलेम', 'సేలం'],
+      thanjavur: ['thanjavur', 'tanjore', 'தஞ்சாவூர்', 'तंजावुर', 'తంజావూరు'],
+      erode: ['erode', 'ஈரோடு', 'इरोड', 'ఈరోడ్']
+    };
+    let voiceMediaRecorder = null;
+    let voiceAudioChunks = [];
+    let voiceStream = null;
+    let isVoiceRecording = false;
+
+    function setVoiceAssistStatus(message, tone = 'neutral') {
+      const statusEl = document.getElementById('voiceAssistStatus');
+      if (!statusEl) return;
+
+      const colors = {
+        neutral: '#475569',
+        active: '#0f766e',
+        error: '#b91c1c',
+        success: '#166534'
+      };
+
+      statusEl.textContent = message;
+      statusEl.style.color = colors[tone] || colors.neutral;
+    }
+
+    function normalizeVoiceText(value) {
+      return String(value || '').toLowerCase().normalize('NFC').replace(/[^\p{L}\p{N}. ]/gu, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    function findVoiceAlias(text, aliasGroups) {
+      for (const [value, aliases] of Object.entries(aliasGroups)) {
+        if (aliases.some(alias => text.includes(normalizeVoiceText(alias)))) {
+          return value;
+        }
+      }
+      return null;
+    }
+
+    function parseVoiceNumber(text) {
+      const digitMatch = text.match(/[0-9०-९௦-௯౦-౯]+(?:\.[0-9०-९௦-௯౦-౯]+)?/u);
+      if (digitMatch) {
+        const normalizedDigits = digitMatch[0].replace(/[०-९]/g, digit => '०१२३४५६७८९'.indexOf(digit)).replace(/[௦-௯]/g, digit => '௦௧௨௩௪௫௬௭௮௯'.indexOf(digit)).replace(/[౦-౯]/g, digit => '౦౧౨౩౪౫౬౭౮౯'.indexOf(digit));
+        return Number(normalizedDigits);
+      }
+
+      for (const [number, aliases] of Object.entries(VOICE_NUMBER_ALIASES)) {
+        if (aliases.some(alias => text.includes(normalizeVoiceText(alias)))) {
+          return Number(number);
+        }
+      }
+      return null;
+    }
+
+    function parseMultilingualVoiceCommand(transcript) {
+      const text = normalizeVoiceText(transcript);
+      const updates = {};
+
+      updates.crop = findVoiceAlias(text, VOICE_CROP_ALIASES);
+      updates.destination = findVoiceAlias(text, VOICE_DESTINATION_ALIASES);
+      updates.quantity = parseVoiceNumber(text);
+
+      const perspectiveMatch = text.match(/farmer|buyer|mandi|market|किसान|शेतकरी|விவசாயி|రైతు/iu);
+      if (perspectiveMatch) {
+        const label = perspectiveMatch[0];
+        updates.perspective = /buyer|mandi|market|மண்டி|मंडी|మార్కెట్/iu.test(label) ? 'buyer' : 'farmer';
+      }
+
+      const targetPool = (updates.perspective === 'farmer' ? allBuyers : updates.perspective === 'buyer' ? allFarmers : document.getElementById('userPerspective').value === 'farmer' ? allBuyers : allFarmers) || [];
+      const matchingTarget = targetPool.find((item) => {
+        const name = normalizeVoiceText(item.name);
+        const location = normalizeVoiceText(item.location);
+        const destinationMatches = updates.destination && VOICE_DESTINATION_ALIASES[updates.destination].some(alias => location.includes(normalizeVoiceText(alias)) || name.includes(normalizeVoiceText(alias)));
+        return (name && text.includes(name)) || (location && text.includes(location)) || destinationMatches;
+      });
+      if (matchingTarget) {
+        updates.target = matchingTarget;
+      }
+
+      return updates;
+    }
+
+    function parseVoiceCommand(transcript) {
+      return parseMultilingualVoiceCommand(transcript);
+    }
+
+    function calculateRoute() {
+      const targetIndex = document.getElementById('targetSelect').value;
+      if (targetIndex !== '' && availableTargets[targetIndex] && startMarker) {
+        const target = availableTargets[targetIndex];
+        setEndPoint(target.latitude, target.longitude, target.name);
+      }
+    }
+
+    async function applyVoiceCommand(transcript) {
+      const command = parseVoiceCommand(transcript);
+      if (!command.crop && !command.quantity && !command.target && !command.perspective) {
+        setVoiceAssistStatus('No route details recognized. Try “Tomato from Coimbatore” or “set crop to banana”.', 'error');
+        return;
+      }
+
+      if (command.perspective) {
+        document.getElementById('userPerspective').value = command.perspective;
+        onPerspectiveChanged();
+      }
+
+      if (command.crop) {
+        document.getElementById('cropFilterSelect').value = command.crop;
+      }
+
+      if (command.quantity) {
+        document.getElementById('routingQuantity').value = command.quantity;
+      }
+
+      applyCropFilter();
+      recalculateFreightCost();
+
+      if (command.target || command.destination) {
+        const target = command.target || availableTargets.find((item) => {
+          const targetText = normalizeVoiceText(`${item.name} ${item.location}`);
+          return VOICE_DESTINATION_ALIASES[command.destination].some(alias => targetText.includes(normalizeVoiceText(alias)));
+        });
+        const matchIndex = target ? availableTargets.findIndex((availableTarget) => availableTarget.name === target.name && availableTarget.location === target.location) : -1;
+        if (matchIndex >= 0) {
+          document.getElementById('targetSelect').value = matchIndex;
+          calculateRoute();
+        }
+      }
+
+      const cropLabel = command.crop || document.getElementById('cropFilterSelect').value;
+      const quantityLabel = command.quantity || document.getElementById('routingQuantity').value;
+      const destinationLabel = command.destination || command.target?.location || 'selected destination';
+      setVoiceAssistStatus(`Applied: ${cropLabel} ${quantityLabel} to ${destinationLabel}`, 'success');
+      FB_AUTH.showToast('Voice command applied to routing form.', 'success');
+    }
+
+    async function uploadVoiceRecording(blob) {
+      const formData = new FormData();
+      formData.append('audio', blob, 'voice_recording.webm');
+
+      setVoiceAssistStatus('Transcribing...', 'active');
+
+      try {
+        const res = await fetch(`${window.location.origin}/api/transcribe-voice`, {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin'
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.status !== 'success') {
+          throw new Error(data.message || 'Transcription failed');
+        }
+
+        const finalText = (data.transcript || '').trim();
+        if (!finalText) {
+          throw new Error('No speech detected');
+        }
+
+        setVoiceAssistStatus(`Heard: ${finalText} (${data.detected_language || 'en'}). Applying…`, 'active');
+        await applyVoiceCommand(finalText);
+      } catch (err) {
+        console.error('Voice transcription failed:', err);
+        setVoiceAssistStatus('Voice recognition failed. Please try again.', 'error');
+        FB_AUTH.showToast(err.message || 'Speech transcription failed.', 'error');
+      }
+    }
+
+    async function toggleVoiceAssist() {
+      const voiceBtn = document.getElementById('voiceAssistBtn');
+
+      if (isVoiceRecording) {
+        if (voiceMediaRecorder && voiceMediaRecorder.state !== 'inactive') {
+          voiceMediaRecorder.stop();
+        }
+        if (voiceStream) {
+          voiceStream.getTracks().forEach((track) => track.stop());
+          voiceStream = null;
+        }
+        isVoiceRecording = false;
+        voiceBtn.classList.remove('btn-danger');
+        voiceBtn.classList.add('btn-secondary');
+        voiceBtn.textContent = '🎙️ Voice Assist';
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        voiceStream = stream;
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : MediaRecorder.isTypeSupported('audio/wav') ? 'audio/wav' : '';
+        const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+        voiceAudioChunks = [];
+
+        recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            voiceAudioChunks.push(event.data);
+          }
+        };
+
+        recorder.onstop = async () => {
+          const audioBlob = new Blob(voiceAudioChunks, { type: recorder.mimeType || mimeType || 'audio/webm' });
+          await uploadVoiceRecording(audioBlob);
+          if (voiceStream) {
+            voiceStream.getTracks().forEach((track) => track.stop());
+            voiceStream = null;
+          }
+        };
+
+        voiceMediaRecorder = recorder;
+        recorder.start();
+        isVoiceRecording = true;
+        voiceBtn.classList.remove('btn-secondary');
+        voiceBtn.classList.add('btn-danger');
+        voiceBtn.textContent = '⏹️ Stop Recording';
+        setVoiceAssistStatus('Listening... (Speak)', 'active');
+      } catch (err) {
+        console.error('Microphone access failed:', err);
+        setVoiceAssistStatus('Microphone access denied. Please allow permissions.', 'error');
+        FB_AUTH.showToast('Microphone access denied.', 'error');
+      }
+    }
+
+    function applyCropFilter() {
+      const cropFilterSelect = document.getElementById('cropFilterSelect');
+      if (cropFilterSelect) {
+        cropFilterSelect.value = cropFilterSelect.value || 'All Crops';
+      }
+
+      plotNearbyTargets();
+      renderTableRecords();
+    }
+
+    function resetRoutingWorkspace() {
+      if (startMarker) routingMap.removeLayer(startMarker);
+      if (endMarker) routingMap.removeLayer(endMarker);
+      if (routePolyline) routingMap.removeLayer(routePolyline);
+      startMarker = null;
+      endMarker = null;
+      routePolyline = null;
+      document.getElementById('targetSelect').value = "";
+      document.getElementById('cropFilterSelect').value = 'All Crops';
+      refreshWorkspace();
+      FB_AUTH.showToast('Routing workspace reset.', 'info');
+    }
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    }
+  </script>
+</body>
+</html>
